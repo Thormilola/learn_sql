@@ -336,3 +336,173 @@ FROM [Practising SQL ].dbo.EmployeeDemographics Demo
 JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 ON Demo.EmployeeID = Sal.EmployeeID
 GROUP BY Gender;
+
+SELECT Demo.First_Name + ' ' + Demo.Last_Name AS Full_Name, JobTitle,
+CASE
+    WHEN JobTitle = 'Salesman' THEN salary + (salary * 0.10)
+	WHEN JobTitle = 'Accountant' THEN salary + (salary * 0.05)
+	WHEN JobTitle = 'Regional Manager' THEN salary + (salary * 0.12)
+	ELSE salary + (salary * 0.02)
+END   
+FROM [Practising SQL ].dbo.EmployeeDemographics Demo
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Demo.EmployeeID = Sal.EmployeeID
+
+SELECT First_Name, Last_Name, 
+COUNT(Gender) OVER (PARTITION BY Gender) AS Gender_Count
+FROM [Practising SQL ].dbo.EmployeeDemographics Demo
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Demo.EmployeeID = Sal.EmployeeID
+GROUP BY First_Name, Last_Name, Gender
+
+SELECT JobTitle, Avg(salary) AS avg_salary_of_each_job_title
+FROM [Practising SQL ].dbo.EmployeeDemographics Demo
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Demo.EmployeeID = Sal.EmployeeID
+GROUP BY JobTitle
+HAVING avg(salary) > 45000
+ORDER BY avg_salary_of_each_job_title DESC;
+
+UPDATE [Practising SQL ].dbo.EmployeeSalary
+SET JobTitle = 'Sales Manager', salary = 80000
+WHERE EmployeeID = 1001;
+
+--ADVANCED 
+--Subqueries
+
+---SUBQUERY IN THE SELECT STATEMENT
+SELECT EmployeeID, salary, (SELECT AVG(salary)  FROM EmployeeSalary) AS AllAvgSalary
+FROM EmployeeSalary
+
+--using partition by
+SELECT EmployeeID, salary,
+AVG(salary) OVER () AS AllAvgSalary
+FROM EmployeeSalary;
+
+--Why Group by doesnt work
+SELECT EmployeeID, salary, AVG(salary) AS AllAvgSalary
+FROM EmployeeSalary
+Group By EmployeeID, salary
+ORDER BY 1, 2;
+
+--SUBQUERY IN THE FROM STATEMENT
+SELECT a.EmployeeID, AllAvgSalary
+FROM (SELECT EmployeeID, salary, AVG(salary) OVER () AS AllAvgSalary
+FROM EmployeeSalary) a
+
+--SUBQUERY IN THE WHERE STATEMENT --only one column can go into this.
+--this script displays record of employees over the age of 30
+SELECT EmployeeID, JobTitle, salary
+FROM EmployeeSalary 
+WHERE EmployeeID in (
+               SELECT EmployeeID
+			   FROM EmployeeDemographics
+			   WHERE Age > 30);
+
+--doing it with join
+SELECT demo.EmployeeID, Age, JobTitle, salary
+FROM EmployeeSalary sal
+JOIN EmployeeDemographics demo
+ON sal.EmployeeID = demo.EmployeeID
+WHERE Age > 30;
+
+
+SELECT *,
+AVG(salary) OVER () AS AllAvgSalary
+FROM EmployeeSalary;
+
+SELECT EmployeeID, JobTitle, Salary, (SELECT AVG(salary) FROM EmployeeSalary) AS AllAvgSalary
+FROM EmployeeSalary
+
+SELECT EmployeeID, JobTitle, Salary
+FROM EmployeeSalary
+WHERE EmployeeID in (SELECT EmployeeID
+                     FROM EmployeeDemographics
+					 WHERE Age > 30);
+
+SELECT demo.EmployeeID, JobTitle, Salary
+FROM EmployeeDemographics demo
+JOIN EmployeeSalary sal
+ON demo.EmployeeID = sal.EmployeeID
+WHERE Age > 30;
+
+
+SELECT a.EmployeeID, AllAvgSalary
+FROM (SELECT EmployeeID, AVG(salary) OVER () AS AllAvgSalary 
+FROM EmployeeSalary) a;
+
+
+--CTE Common Table Expressions
+--acts very much like sub query
+--the CTE Select statement  must come immediately after the CTE statement
+WITH CTE_Employee as
+(SELECT First_Name, Last_Name, Gender, Salary,
+COUNT(Gender) OVER (PARTITION BY Gender) AS Total_Gender,
+AVG(salary) OVER (PARTITION BY Gender) AS Avg_Salary
+FROM [Practising SQL ].dbo.EmployeeDemographics Dem
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+   ON Dem.EmployeeID = Sal.EmployeeID
+WHERE salary > '45000'
+)  
+SELECT *
+FROM CTE_Employee
+
+WITH CTE_Employeee as
+(SELECT dem.EmployeeID, First_Name, Last_Name,
+COUNT(Gender) OVER(PARTITION BY Gender) as Total_Count,
+AVG(salary) OVER(PARTITION BY Gender) AS Avg_Salary
+FROM EmployeeDemographics dem
+JOIN EmployeeSalary sal
+ON dem.EmployeeID = sal.EmployeeID
+WHERE Salary > 45000
+)
+SELECT Last_Name, Avg_Salary
+FROM CTE_Employeee
+
+--TEMP TABLES - TEMPORARY TABLES
+CREATE TABLE #temp_Employee (
+EmployeeID int,
+JobTitle varchar(50),
+salary int);
+
+SELECT *
+FROM #temp_Employee;
+
+INSERT INTO #temp_Employee VALUES(
+1001, 'H4', 45000);
+
+INSERT INTO #temp_Employee
+SELECT *
+FROM EmployeeSalary
+
+UPDATE #temp_Employee
+SET JobTitle = 'HR'
+WHERE salary = 45000;
+
+UPDATE #temp_Employee
+SET EmployeeID = 1011
+WHERE salary = 45000;
+
+CREATE TABLE #temp_Employee2 (
+JobTitle varchar(50),
+EmployeesPerJob int,
+AvgAge int,
+AvgSalary int)
+
+INSERT INTO #temp_Employee2
+SELECT JobTitle,Count(JobTitle), Avg(Age), Avg(Salary)
+FROM [Practising SQL ].dbo.EmployeeDemographics Dem
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Dem.EmployeeID = Sal.EmployeeID
+GROUP BY JobTitle;
+
+SELECT *
+FROM #temp_Employee2
+
+DROP TABLE IF EXISTS #temp_Employee2
+INSERT INTO #temp_Employee2
+SELECT JobTitle,Count(JobTitle), Avg(Age), Avg(Salary)
+FROM [Practising SQL ].dbo.EmployeeDemographics Dem
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Dem.EmployeeID = Sal.EmployeeID
+GROUP BY JobTitle;
