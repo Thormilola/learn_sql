@@ -1,5 +1,7 @@
 --BASIC SQL
---select statement, select *, Top, Distinct, count, as, max, min, avg
+
+---SELECT STATEMENT 
+---select *, Top, Distinct, count, as, max, min, avg
 
 SELECT *
 FROM EmployeeDemographics;
@@ -7,13 +9,13 @@ FROM EmployeeDemographics;
 SELECT TOP 5 *
 FROM EmployeeDemographics;
 
-SELECT DISTINCT(Gender)
+SELECT DISTINCT (Gender)
 FROM EmployeeDemographics;
 
 SELECT COUNT(Last_Name) AS LastNameCount
 FROM EmployeeDemographics;
 
-SELECT MAX(Salary) AS MaximumSalary
+SELECT MAX(Salary) AS Maximum_Salary
 FROM EmployeeSalary;
 
 SELECT MIN(Salary) AS MinimumSalary
@@ -22,15 +24,16 @@ FROM EmployeeSalary;
 SELECT AVG(Salary) AS AverageSalary
 FROM EmployeeSalary;
 
---FROM STATEMENT
+---FROM STATEMENT
 SELECT *
 FROM [Practising SQL ].dbo.EmployeeSalary;
 
 SELECT TOP 5 *
 FROM [Practising SQL ].dbo.EmployeeDemographics;
 
---WHERE CLAUSE
--- =, <>, <, >, And, Or, Like, IN, IS NULL, IS NOT NULL
+---WHERE CLAUSE
+-- =(greater than), <>(not equal to), <(less than>, >(greater than), >=(greater than or equal to), <=(less than or equal to) And, 
+--Or, Like, IN, IS NULL, IS NOT NULL
 
 SELECT *
 FROM EmployeeDemographics
@@ -46,7 +49,7 @@ WHERE Age > 30;
 
 SELECT *
 FROM EmployeeDemographics
-WHERE Age < 30 ;
+WHERE Age < 30;
 
 SELECT *
 FROM EmployeeDemographics
@@ -54,7 +57,7 @@ WHERE Age >= 30;
 
 SELECT *
 FROM EmployeeDemographics
-WHERE Age <= 32 ;
+WHERE Age <= 32;
 
 SELECT *
 FROM EmployeeDemographics
@@ -64,48 +67,48 @@ SELECT *
 FROM EmployeeDemographics
 WHERE Age > 30 OR Gender = 'Male';
 
+--this query returns last_name that has the letter 'e' at any position
 SELECT *
 FROM EmployeeDemographics
-WHERE First_Name LIKE '%m' ;
+WHERE Last_Name LIKE '%e%';
 
+--this query returns first_name that starts with 'p' and has any number of characters
 SELECT *
 FROM EmployeeDemographics
-WHERE First_Name LIKE 'P%' ;
+WHERE First_Name LIKE 'P%';
 
+--this query returns first_name that starts with 'p' and has two more characters after p
 SELECT *
 FROM EmployeeDemographics
-WHERE Last_Name LIKE 'S%' ;
+WHERE First_Name LIKE 'p__' ;
 
+--this query returns last names that starts with 's' and has the letter "t" at any position
 SELECT *
 FROM EmployeeDemographics
-WHERE Last_Name LIKE '%S%' ;
+WHERE Last_Name LIKE 's%t%';
 
-SELECT *
-FROM EmployeeDemographics
-WHERE Last_Name LIKE 'S%ott%' ;
-
+--this query returns any rows where the last name is null
 SELECT *
 FROM EmployeeDemographics
 WHERE Last_Name is NULL ;
 
+--this query returns any rows where the last name is not null
 SELECT *
 FROM EmployeeDemographics
-WHERE Last_Name is NOT NULL ;
+WHERE Last_Name is NOT NULL;
 
+-- To the best of my current understanding, IN is used to specify multiple conditions in a column.
 SELECT *
 FROM EmployeeDemographics
-WHERE Age IN (30,32) ;
+WHERE Age IN (30,32);
 
 --GROUP BY, ORDER BY
+---group by
 SELECT Gender, COUNT(Gender) as GenderCount
 FROM EmployeeDemographics
 GROUP BY Gender;
 
-SELECT Gender,COUNT(Gender) as GenderCount
-FROM EmployeeDemographics
-GROUP BY Gender;
-
-SELECT Gender, Age, COUNT(Gender) as GenderCount
+SELECT Gender, Age, COUNT(Gender)
 FROM EmployeeDemographics
 GROUP BY Gender, Age;
 
@@ -119,6 +122,11 @@ FROM EmployeeDemographics
 WHERE Age > 31
 GROUP BY Gender
 ORDER BY GenderCount DESC;
+
+--sorts the data by a particular column
+SELECT *
+FROM EmployeeDemographics
+ORDER BY Age;
 
 SELECT *
 FROM EmployeeDemographics
@@ -142,20 +150,8 @@ SELECT *
 FROM EmployeeDemographics
 WHERE Age >= 30 OR Gender = 'Female';
 
---INTERMEDIATE
---JOINS
---CASE STATEMENTS
---UPDATING/DELETING DATA
---PARTITION BY
---DATA TYPES
---ALIASING
---CREATING VIEWS
---HAVING VS GROUP BY
---GETDATE()
---PRIMARY KEY VS FOREIGN KEY
---Inner joins, full/left/right outer joins
-
-
+--INTERMEDIATE SQL
+--Inserting more data into the table
 INSERT INTO EmployeeDemographics VALUES
 (1011, 'Ryan', 'Howard', 26, 'Male'),
 (' ', 'Holly', 'Flax', ' ' , ' '),
@@ -171,10 +167,18 @@ FROM [Practising SQL ].dbo.EmployeeDemographics;
 SELECT *
 FROM [Practising SQL ].dbo.EmployeeSalary;
 
-SELECT d.EmployeeID, First_Name, Last_Name, salary
-FROM [Practising SQL ].dbo.EmployeeDemographics d
-INNER JOIN [Practising SQL ].dbo.EmployeeSalary s
-ON d.EmployeeID = s.EmployeeID
+--JOINS
+--Inner_Join
+SELECT *
+FROM EmployeeDemographics
+JOIN EmployeeSalary
+ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID
+
+--Inner Join and aliasing
+SELECT *
+FROM EmployeeDemographics demo
+INNER JOIN EmployeeSalary sal
+ON demo.EmployeeID = sal.EmployeeID
 WHERE First_Name <> 'Michael'
 ORDER BY salary DESC;
 
@@ -185,7 +189,25 @@ ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID
 WHERE JobTitle = 'Salesman'
 GROUP BY JobTitle;
 
---UNION(Unique), UNION ALL(shows even duplicates)
+--left join
+SELECT *
+FROM EmployeeDemographics 
+LEFT JOIN EmployeeSalary 
+ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID;
+
+--right join
+SELECT *
+FROM EmployeeDemographics 
+RIGHT JOIN EmployeeSalary 
+ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID;
+
+--full outer join
+SELECT *
+FROM EmployeeDemographics
+FULL OUTER JOIN WareHouseEmployeeDemographics
+ON EmployeeDemographics.EmployeeID = WareHouseEmployeeDemographics.EmployeeID
+
+--creating a new table to demonstrate union
 CREATE TABLE WareHouseEmployeeDemographics 
 (EmployeeID int,
 First_Name varchar(50),
@@ -204,20 +226,15 @@ FROM EmployeeDemographics
 FULL OUTER JOIN WareHouseEmployeeDemographics
 ON EmployeeDemographics.EmployeeID = WareHouseEmployeeDemographics.EmployeeID
 
+--UNION(Unique), UNION ALL(shows even duplicates)
 SELECT *
 FROM EmployeeDemographics
 UNION
 SELECT *
 FROM WareHouseEmployeeDemographics;
 
---using a union to combine two different tables
-SELECT EmployeeID, First_Name, Age
-FROM EmployeeDemographics
-UNION
-SELECT EmployeeID, JobTitle, Salary
-FROM EmployeeSalary
-
---CASE - helps you to specify a condition and what should be returned when the condition is met
+--CASE
+-- helps you to specify a condition and what should be returned when the condition is met
 SELECT First_Name, Last_Name, Age,
 CASE
    WHEN Age > 30 THEN 'Old'
@@ -259,6 +276,17 @@ FROM [Practising SQL ].dbo.EmployeeDemographics
 JOIN [Practising SQL ].dbo.EmployeeSalary
 ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID
 
+SELECT demo.EmployeeID, Last_Name, salary,
+CASE 
+    WHEN salary > 60000 THEN 'Good_Pay'
+	WHEN salary BETWEEN 45000 AND 60000 THEN 'Average_Pay'
+	WHEN salary > 40000 AND salary < 45000 THEN 'Below_Average_Pay'
+	ELSE 'They_Need_To_Do_Better'
+END AS 'Pay_Condition'
+FROM EmployeeDemographics demo
+INNER JOIN EmployeeSalary sal
+ON demo.EmployeeID = sal.EmployeeID
+
 --Having Clause
 SELECT JobTitle, count(JobTitle) as Number_of_people_with_that_job_title
 FROM [Practising SQL ].dbo.EmployeeDemographics
@@ -268,19 +296,19 @@ GROUP BY JobTitle
 HAVING count(JobTitle) > 1;
 
 SELECT JobTitle, AVG(salary) as Avg_Salary_for_each_job_title
-FROM [Practising SQL ].dbo.EmployeeDemographics
-JOIN [Practising SQL ].dbo.EmployeeSalary
-ON EmployeeDemographics.EmployeeID = EmployeeSalary.EmployeeID
+FROM [Practising SQL ].dbo.EmployeeDemographics dem
+JOIN [Practising SQL ].dbo.EmployeeSalary sal
+ON dem.EmployeeID = sal.EmployeeID
 GROUP BY JobTitle
 HAVING avg(salary) > 45000
 ORDER BY avg(salary) DESC;
 
 
---Updating/Deleting Data
---difference between inserting/updating/deleting
+--UPDATING AND DELETING
+--The WHERE clause must be used with the UPDATE and DELETE statement unless your intention is to update or delete the whole records in the 
+--table respectively.
 
---UPDATE
-
+--update
 UPDATE [Practising SQL ].dbo.EmployeeDemographics
 SET EmployeeID = 1012
 WHERE First_Name = 'Holly';
@@ -293,7 +321,11 @@ UPDATE [Practising SQL ].dbo.EmployeeDemographics
 SET Gender = 'Female'
 WHERE First_Name = 'Holly' AND Last_Name = 'Flax';
 
---DELETE , The where clause must be included else all data will be deleted.
+UPDATE EmployeeDemographics
+SET Age = 39
+WHERE EmployeeID = 1013;
+
+--delete 
 DELETE FROM [Practising SQL ].dbo.EmployeeSalary
 WHERE EmployeeID = 0;
 
@@ -305,24 +337,30 @@ SELECT First_Name + ' ' + Last_Name AS Full_Name
 FROM EmployeeDemographics;
 
 --Aliasing the table name. This can be very useful especially when you have alot of joins
-SELECT Demo.EmployeeID, Sal.salary
-FROM [Practising SQL ].dbo.EmployeeDemographics AS Demo
-JOIN [Practising SQL ].dbo.EmployeeSalary AS Sal
-ON Demo.EmployeeID = Sal.EmployeeID;
+SELECT demo.EmployeeID, sal.salary
+FROM [Practising SQL ].dbo.EmployeeDemographics AS demo
+JOIN [Practising SQL ].dbo.EmployeeSalary AS sal
+ON demo.EmployeeID = sal.EmployeeID;
 
 SELECT Demo.First_Name + ' ' + Demo.Last_Name AS Full_Name, Sal.JobTitle, Sal.salary 
 FROM [Practising SQL ].dbo.EmployeeDemographics Demo
 LEFT JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 ON Demo.EmployeeID = Sal.EmployeeID
 LEFT JOIN [Practising SQL ].dbo.WareHouseEmployeeDemographics Ware
-ON Demo.EmployeeID = Ware.EmployeeID
+ON Demo.EmployeeID = Ware.EmployeeID;
 
---Partition by
+--PARTITION BY
 SELECT First_Name, Last_Name, Gender, salary,
 COUNT(Gender) OVER (PARTITION BY Gender) AS Total_Gender
 FROM [Practising SQL ].dbo.EmployeeDemographics Demo
 JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 ON Demo.EmployeeID = Sal.EmployeeID;
+
+SELECT First_Name + ' ' + Last_Name AS Full_Name, Gender,
+COUNT(Gender) OVER (PARTITION BY Gender) AS Gender_Count
+FROM EmployeeDemographics demo
+JOIN EmployeeSalary sal
+ON demo.EmployeeID = sal.EmployeeID;
 
 --see why it is different from a group by statement
 SELECT First_Name, Last_Name, Gender, salary, COUNT(Gender) AS Total_Gender
@@ -337,47 +375,26 @@ JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 ON Demo.EmployeeID = Sal.EmployeeID
 GROUP BY Gender;
 
-SELECT Demo.First_Name + ' ' + Demo.Last_Name AS Full_Name, JobTitle,
-CASE
-    WHEN JobTitle = 'Salesman' THEN salary + (salary * 0.10)
-	WHEN JobTitle = 'Accountant' THEN salary + (salary * 0.05)
-	WHEN JobTitle = 'Regional Manager' THEN salary + (salary * 0.12)
-	ELSE salary + (salary * 0.02)
-END   
-FROM [Practising SQL ].dbo.EmployeeDemographics Demo
-JOIN [Practising SQL ].dbo.EmployeeSalary Sal
-ON Demo.EmployeeID = Sal.EmployeeID
+--ADVANCED SQL
 
-SELECT First_Name, Last_Name, 
-COUNT(Gender) OVER (PARTITION BY Gender) AS Gender_Count
-FROM [Practising SQL ].dbo.EmployeeDemographics Demo
-JOIN [Practising SQL ].dbo.EmployeeSalary Sal
-ON Demo.EmployeeID = Sal.EmployeeID
-GROUP BY First_Name, Last_Name, Gender
+--SUBQUERIES
 
-SELECT JobTitle, Avg(salary) AS avg_salary_of_each_job_title
-FROM [Practising SQL ].dbo.EmployeeDemographics Demo
-JOIN [Practising SQL ].dbo.EmployeeSalary Sal
-ON Demo.EmployeeID = Sal.EmployeeID
-GROUP BY JobTitle
-HAVING avg(salary) > 45000
-ORDER BY avg_salary_of_each_job_title DESC;
-
-UPDATE [Practising SQL ].dbo.EmployeeSalary
-SET JobTitle = 'Sales Manager', salary = 80000
-WHERE EmployeeID = 1001;
-
---ADVANCED 
---Subqueries
-
----SUBQUERY IN THE SELECT STATEMENT
+---subquery in the select statement
 SELECT EmployeeID, salary, (SELECT AVG(salary)  FROM EmployeeSalary) AS AllAvgSalary
-FROM EmployeeSalary
+FROM EmployeeSalary;
+
+SELECT EmployeeID, First_Name + ' ' + Last_Name AS Full_Name, Age,
+(SELECT AVG(Age) FROM EmployeeDemographics) AS AllAvgAge
+FROM EmployeeDemographics;
 
 --using partition by
 SELECT EmployeeID, salary,
 AVG(salary) OVER () AS AllAvgSalary
 FROM EmployeeSalary;
+
+SELECT EmployeeID, First_Name + ' ' + Last_Name AS Full_Name, Age,
+AVG(Age) OVER() AS AllAvgAge
+FROM EmployeeDemographics;
 
 --Why Group by doesnt work
 SELECT EmployeeID, salary, AVG(salary) AS AllAvgSalary
@@ -388,7 +405,12 @@ ORDER BY 1, 2;
 --SUBQUERY IN THE FROM STATEMENT
 SELECT a.EmployeeID, AllAvgSalary
 FROM (SELECT EmployeeID, salary, AVG(salary) OVER () AS AllAvgSalary
-FROM EmployeeSalary) a
+FROM EmployeeSalary) a;
+
+SELECT a.EmployeeID, Full_Name, AllAvgAge 
+FROM 
+(SELECT EmployeeID, First_Name + ' ' + Last_Name AS Full_Name, Age, AVG(Age) OVER () AS AllAvgAge 
+FROM EmployeeDemographics) a;
 
 --SUBQUERY IN THE WHERE STATEMENT --only one column can go into this.
 --this script displays record of employees over the age of 30
@@ -399,38 +421,12 @@ WHERE EmployeeID in (
 			   FROM EmployeeDemographics
 			   WHERE Age > 30);
 
---doing it with join
+--the above syntax can also be done with join
 SELECT demo.EmployeeID, Age, JobTitle, salary
 FROM EmployeeSalary sal
 JOIN EmployeeDemographics demo
 ON sal.EmployeeID = demo.EmployeeID
 WHERE Age > 30;
-
-
-SELECT *,
-AVG(salary) OVER () AS AllAvgSalary
-FROM EmployeeSalary;
-
-SELECT EmployeeID, JobTitle, Salary, (SELECT AVG(salary) FROM EmployeeSalary) AS AllAvgSalary
-FROM EmployeeSalary
-
-SELECT EmployeeID, JobTitle, Salary
-FROM EmployeeSalary
-WHERE EmployeeID in (SELECT EmployeeID
-                     FROM EmployeeDemographics
-					 WHERE Age > 30);
-
-SELECT demo.EmployeeID, JobTitle, Salary
-FROM EmployeeDemographics demo
-JOIN EmployeeSalary sal
-ON demo.EmployeeID = sal.EmployeeID
-WHERE Age > 30;
-
-
-SELECT a.EmployeeID, AllAvgSalary
-FROM (SELECT EmployeeID, AVG(salary) OVER () AS AllAvgSalary 
-FROM EmployeeSalary) a;
-
 
 --CTE Common Table Expressions
 --acts very much like sub query
@@ -445,19 +441,19 @@ JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 WHERE salary > '45000'
 )  
 SELECT *
-FROM CTE_Employee
+FROM CTE_Employee;
 
-WITH CTE_Employeee as
-(SELECT dem.EmployeeID, First_Name, Last_Name,
-COUNT(Gender) OVER(PARTITION BY Gender) as Total_Count,
-AVG(salary) OVER(PARTITION BY Gender) AS Avg_Salary
+WITH CTE_salary AS
+(SELECT dem.EmployeeID, JobTitle, Gender,
+COUNT(Gender) OVER(PARTITION BY Gender) AS Gender_Count,
+AVG(salary) OVER(PARTITION BY Gender) AS All_Salary
 FROM EmployeeDemographics dem
 JOIN EmployeeSalary sal
 ON dem.EmployeeID = sal.EmployeeID
-WHERE Salary > 45000
+WHERE salary > 40000
 )
-SELECT Last_Name, Avg_Salary
-FROM CTE_Employeee
+SELECT *
+FROM CTE_salary
 
 --TEMP TABLES - TEMPORARY TABLES
 CREATE TABLE #temp_Employee (
@@ -506,3 +502,33 @@ FROM [Practising SQL ].dbo.EmployeeDemographics Dem
 JOIN [Practising SQL ].dbo.EmployeeSalary Sal
 ON Dem.EmployeeID = Sal.EmployeeID
 GROUP BY JobTitle;
+
+--STORED PROCEDURE
+CREATE PROCEDURE Test
+AS
+SELECT *
+FROM EmployeeDemographics;
+
+EXEC Test;
+
+CREATE PROCEDURE Temp_Employee3
+AS
+CREATE TABLE #temp_Employee3 (
+JobTitle varchar(100),
+EmployeesPerJob int,
+AvgAge int,
+AvgSalary int
+)
+INSERT INTO #temp_Employee3
+SELECT JobTitle,Count(JobTitle), Avg(Age), Avg(Salary)
+FROM [Practising SQL ].dbo.EmployeeDemographics Dem
+JOIN [Practising SQL ].dbo.EmployeeSalary Sal
+ON Dem.EmployeeID = Sal.EmployeeID
+GROUP BY JobTitle;
+
+SELECT *
+FROM #temp_Employee3
+
+EXEC Temp_Employee3 @JobTitle = 'Salesman'
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
