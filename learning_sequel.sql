@@ -1,5 +1,6 @@
 --BASIC SQL
 
+--Already created my tables EmployeeDemographics and EmployeeSalary but I created another table in this script to demonstrate table creation
 ---SELECT STATEMENT 
 ---select *, Top, Distinct, count, as, max, min, avg
 
@@ -207,7 +208,7 @@ FROM EmployeeDemographics
 FULL OUTER JOIN WareHouseEmployeeDemographics
 ON EmployeeDemographics.EmployeeID = WareHouseEmployeeDemographics.EmployeeID
 
---creating a new table to demonstrate union
+--CREATING A NEW TABLE to demonstrate union
 CREATE TABLE WareHouseEmployeeDemographics 
 (EmployeeID int,
 First_Name varchar(50),
